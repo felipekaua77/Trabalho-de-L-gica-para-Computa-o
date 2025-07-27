@@ -1,50 +1,45 @@
 import random
 import copy
 
-def gerar_estado_inicial(estado_final, num_movimentos=15):
-    atual = copy.deepcopy(estado_final)
-    for _ in range(num_movimentos):
-        movs = movimentos_validos(atual)
+def embaralhar(final, passos=15):
+    tab = copy.deepcopy(final)
+    for _ in range(passos):
+        movs = moves(tab)
         mov = random.choice(movs)
-        atual = aplicar_movimento(atual, mov)
-    return atual
+        tab = mover(tab, mov)
+    return tab
 
-def movimentos_validos(estado):
-    linha = coluna = None
+def moves(tab):
     for i in range(3):
         for j in range(3):
-            if estado[i][j] == 0:
-                linha, coluna = i, j
-    if linha is None or coluna is None:
-        raise ValueError("Estado inválido: não encontrou o zero.")
-    movimentos = []
-    if linha > 0: movimentos.append('C')
-    if linha < 2: movimentos.append('B')
-    if coluna > 0: movimentos.append('E')
-    if coluna < 2: movimentos.append('D')
-    return movimentos
+            if tab[i][j] == 0:
+                x, y = i, j
+    movs = []
+    if x > 0: movs.append('C')
+    if x < 2: movs.append('B')
+    if y > 0: movs.append('E')
+    if y < 2: movs.append('D')
+    return movs
 
-def aplicar_movimento(estado, movimento):
-    novo = [linha[:]for linha in estado]
-
+def mover(tab, mov):
+    novo = [linha[:] for linha in tab]
     for i in range(3):
         for j in range(3):
-            if estado[i][j] == 0:
-                linha, coluna = i, j
-    if movimento == 'C' and linha > 0:  # Cima
-        novo[linha][coluna], novo[linha - 1][coluna] = novo[linha - 1][coluna], novo[linha][coluna]
-    elif movimento == 'B' and linha < 2:  # Baixo
-        novo[linha][coluna], novo[linha + 1][coluna] = novo[linha + 1][coluna], novo[linha][coluna]
-    elif movimento == 'E' and coluna > 0:  # Esquerda
-        novo[linha][coluna], novo[linha][coluna - 1] = novo[linha][coluna - 1], novo[linha][coluna]
-    elif movimento == 'D' and coluna < 2:  # Direita
-        novo[linha][coluna], novo[linha][coluna + 1] = novo[linha][coluna + 1], novo[linha][coluna]
+            if tab[i][j] == 0:
+                x, y = i, j
+    if mov == 'C' and x > 0:
+        novo[x][y], novo[x-1][y] = novo[x-1][y], novo[x][y]
+    elif mov == 'B' and x < 2:
+        novo[x][y], novo[x+1][y] = novo[x+1][y], novo[x][y]
+    elif mov == 'E' and y > 0:
+        novo[x][y], novo[x][y-1] = novo[x][y-1], novo[x][y]
+    elif mov == 'D' and y < 2:
+        novo[x][y], novo[x][y+1] = novo[x][y+1], novo[x][y]
     return novo
-        
 
-def print_estado(estado):
+def mostrar(tab):
     print("+---+---+---+")
-    for linha in estado:
-        print("| " + " | ".join(str(x) for x in linha) + " |")
+    for linha in tab:
+        print("| " + " | ".join(str(n) for n in linha) + " |")
         print("+---+---+---+")
     print()

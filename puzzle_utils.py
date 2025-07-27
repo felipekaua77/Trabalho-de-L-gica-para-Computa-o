@@ -43,13 +43,8 @@ def aplicar_movimento(estado, movimento):
         
 
 def print_estado(estado):
-    for linha in estado:
-        print(' '.join(str(x) for x in linha))
-    print()
-
-def print_estado(estado):
     print("+---+---+---+")
     for linha in estado:
-        print("| " + " | ".join(" " if x == 0 else str(x) for x in linha) + " |")
+        print("| " + " | ".join(str(x) for x in linha) + " |")
         print("+---+---+---+")
     print()

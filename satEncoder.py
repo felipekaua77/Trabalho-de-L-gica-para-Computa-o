@@ -12,23 +12,44 @@ class SATEncoder:
         return self.varmap[simb]
 
     def adicionar_estado_inicial(self, estado):
-        # Para cada posição (i, j) insira a proposição:
-        # 0_P_i_j_k, onde k é o número no estado inicial
-        pass  # TODO
+        for i in range(3):
+            for j in range(3):
+                k = estado[i][j]
+                simb = f"0_P_{i}_{j}_{k}"
+                var = self.get_var(simb)
+                self.clausulas.append([var])
+        
 
     def adicionar_estado_objetivo(self, estado):
-        # Adicione proposições  N_P_i_j_k
-        pass  # TODO
+        t = self.max_passos
+        for i in range(3):
+            for j in range(3):
+                k = estado[i][j]
+                simb = f"{t}_P_{i}_{j}_{k}"
+                var = self.get_var(simb)
+                self.clausulas.append([var])
 
     def adicionar_regras_posicionamento(self):
-        # Cada posição (i,j) em cada t deve conter algum valor
-        # (t_P_i_j_0 v t_P_i_j_1 v ... v t_P_i_j_8)
-        pass  # TODO
+        for t in range(self.max_passos + 1):
+            for i in range(3):
+                for j in range(3):
+                    clause = []
+                    for k in range(9):
+                        simb = f"{t}_P_{i}_{j}_{k}"
+                        clause.append(self.get_var(simb))
+                    self.clausulas.append(clause)
 
     def adicionar_regras_exclusividade(self):
-        # Em t, uma posição (i,j) só pode conter UM valor
-        # Se t_P_i_j_k então não t_P_i_j_m para m ≠ k
-        pass  # TODO
+        for t in range(self.max_passos + 1):
+            for i in range(3):
+                for j in range(3):
+                    for k in range(9):
+                        for m in range(k + 1, 9):
+                            simb1 = f"{t}_P_{i}_{j}_{k}"
+                            simb2 = f"{t}_P_{i}_{j}_{m}"
+                            var1 = self.get_var(simb1)
+                            var2 = self.get_var(simb2)
+                            self.clausulas.append([-self.get_var(simb1), -self.get_var(simb2)])
 
     def adicionar_acoes(self):
         # Em cada t, apenas uma ação (C, B, E, D) pode ocorrer

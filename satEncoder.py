@@ -57,12 +57,10 @@ class SATEncoder:
             for acao in ['C', 'B', 'E', 'D']:
                 simb = f"{t}_A_{acao}"
                 acoes.append(self.get_var(simb))
-
-                self.clausulas.append(acoes)
-
-                for i in range(4):
-                    for j in range(i + 1, 4):
-                        self.clausulas.append([-acoes[i], -acoes[j]])
+            self.clausulas.append(acoes)  # <-- Fora do loop de ações!
+            for i in range(4):
+                for j in range(i + 1, 4):
+                    self.clausulas.append([-acoes[i], -acoes[j]])
 
     def adicionar_transicoes(self):
         for t in range(1, self.max_passos + 1):

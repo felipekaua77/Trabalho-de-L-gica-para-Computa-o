@@ -1,5 +1,5 @@
 from satEncoder import SATEncoder
-from puzzle_utils import embaralhar, mostrar
+from puzzleUtilitario import embaralhar, mostrar
 from pysat.solvers import Glucose3
 
 final = [

@@ -1,12 +1,13 @@
-from sat_encoder import SATEncoder
+from satEncoder import SATEncoder
 from puzzle_utils import gerar_estado_inicial, print_estado, movimentos_validos
 from pysat.solvers import Glucose3
+import random 
 
 # Estado final desejado
 estado_final = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 0]
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8]
 ]
 
 # Gerar estado inicial aplicando movimentos aleatórios
@@ -16,10 +17,10 @@ print_estado(estado_inicial)
 
 # Tente encontrar solução com N passos
 max_passos = 10000
-for N in range(1, max_passos + 1):
-    print(f"Tentando resolver com {N} passos...")
+for n in range(1, max_passos + 1):
+    print(f"Tentando resolver com {n} passos...")
 
-    encoder = SATEncoder(N)
+    encoder = SATEncoder(n)
     encoder.adicionar_estado_inicial(estado_inicial)
     encoder.adicionar_regras_posicionamento()
     encoder.adicionar_regras_exclusividade()

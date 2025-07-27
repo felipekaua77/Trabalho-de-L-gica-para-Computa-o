@@ -18,7 +18,6 @@ class SATEncoder:
                 simb = f"0_P_{i}_{j}_{k}"
                 var = self.get_var(simb)
                 self.clausulas.append([var])
-        
 
     def adicionar_estado_objetivo(self, estado):
         t = self.max_passos
@@ -47,8 +46,6 @@ class SATEncoder:
                         for m in range(k + 1, 9):
                             simb1 = f"{t}_P_{i}_{j}_{k}"
                             simb2 = f"{t}_P_{i}_{j}_{m}"
-                            var1 = self.get_var(simb1)
-                            var2 = self.get_var(simb2)
                             self.clausulas.append([-self.get_var(simb1), -self.get_var(simb2)])
 
     def adicionar_acoes(self):
@@ -57,7 +54,7 @@ class SATEncoder:
             for acao in ['C', 'B', 'E', 'D']:
                 simb = f"{t}_A_{acao}"
                 acoes.append(self.get_var(simb))
-            self.clausulas.append(acoes)  # <-- Fora do loop de ações!
+            self.clausulas.append(acoes)
             for i in range(4):
                 for j in range(i + 1, 4):
                     self.clausulas.append([-acoes[i], -acoes[j]])
@@ -77,7 +74,6 @@ class SATEncoder:
                             var_antigo = self.get_var(f"{t-1}_P_{i-1}_{j}_{k}")
                             var_trocado = self.get_var(f"{t}_P_{i}_{j}_{k}")
                             self.clausulas.append([-var_zero, -var_acao, -var_antigo, var_trocado])
-                        # Todas as outras peças permanecem
                         for x in range(3):
                             for y in range(3):
                                 if (x, y) != (i, j) and (x, y) != (i-1, j):
@@ -133,18 +129,38 @@ class SATEncoder:
                                         var_antigo = self.get_var(f"{t-1}_P_{x}_{y}_{k}")
                                         var_novo = self.get_var(f"{t}_P_{x}_{y}_{k}")
                                         self.clausulas.append([-var_zero, -var_acao, -var_antigo, var_novo])
+        # Regra extra: se nenhuma ação é possível, o estado se repete
+        for i in range(3):
+            for j in range(3):
+                simb_zero = f"{t-1}_P_{i}_{j}_0"
+                var_zero = self.get_var(simb_zero)
+                acao_vars = []
+                if i > 0:
+                    acao_vars.append(self.get_var(f"{t}_A_C"))
+                if i < 2:
+                    acao_vars.append(self.get_var(f"{t}_A_B"))
+                if j > 0:
+                    acao_vars.append(self.get_var(f"{t}_A_E"))
+                if j < 2:
+                    acao_vars.append(self.get_var(f"{t}_A_D"))
+                if acao_vars:
+                    clausula_acao_neg = [-v for v in acao_vars]
+                    for x in range(3):
+                        for y in range(3):
+                            for k in range(9):
+                                var_antigo = self.get_var(f"{t-1}_P_{x}_{y}_{k}")
+                                var_novo = self.get_var(f"{t}_P_{x}_{y}_{k}")
+                                self.clausulas.append(clausula_acao_neg + [-var_antigo, var_novo])
 
     def interpretar_modelo(self, modelo):
         modelo_set = set(v for v in modelo if v > 0)
         acao_map = { 'C': 'Cima', 'B': 'Baixo', 'E': 'Esquerda', 'D': 'Direita' }
         for t in range(1, self.max_passos + 1):
-            # Mostra ação do passo t
             for acao in ['C', 'B', 'E', 'D']:
                 simb = f"{t}_A_{acao}"
                 var = self.get_var(simb)
                 if var in modelo_set:
                     print(f"Passo {t}: {acao_map[acao]}")
-            # Reconstrói e mostra o estado do tabuleiro nesse passo
             estado = [[-1 for _ in range(3)] for _ in range(3)]
             for i in range(3):
                 for j in range(3):

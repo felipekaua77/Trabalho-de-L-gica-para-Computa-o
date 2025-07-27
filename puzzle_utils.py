@@ -46,3 +46,10 @@ def print_estado(estado):
     for linha in estado:
         print(' '.join(str(x) for x in linha))
     print()
+
+def print_estado(estado):
+    print("+---+---+---+")
+    for linha in estado:
+        print("| " + " | ".join(str(x) if x != 0 else " " for x in linha) + " |")
+        print("+---+---+---+")
+    print()

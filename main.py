@@ -12,7 +12,7 @@ estado_final = [
 
 # Gerar estado inicial aplicando movimentos aleatórios com tratamento de exceção
 try:
-    estado_inicial = gerar_estado_inicial(estado_final, num_movimentos=15)
+    estado_inicial = gerar_estado_inicial(estado_final, num_movimentos=30)
 except Exception as e:
     print("Erro ao gerar estado inicial:", e)
     exit(1)

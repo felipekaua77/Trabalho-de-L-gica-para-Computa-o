@@ -1,3 +1,5 @@
+from puzzle_utils import print_estado
+
 class SATEncoder:
     def __init__(self, max_passos):
         self.max_passos = max_passos
@@ -65,6 +67,22 @@ class SATEncoder:
                 for j in range(3):
                     simb_zero = f"{t-1}_P_{i}_{j}_0"
                     var_zero = self.get_var(simb_zero)
+                    # Pré-condição para ação "Cima"
+                    var_acao_cima = self.get_var(f"{t}_A_C")
+                    if i == 0:
+                        self.clausulas.append([-var_acao_cima, -var_zero])
+                    # Pré-condição para ação "Baixo"
+                    var_acao_baixo = self.get_var(f"{t}_A_B")
+                    if i == 2:
+                        self.clausulas.append([-var_acao_baixo, -var_zero])
+                    # Pré-condição para ação "Esquerda"
+                    var_acao_esq = self.get_var(f"{t}_A_E")
+                    if j == 0:
+                        self.clausulas.append([-var_acao_esq, -var_zero])
+                    # Pré-condição para ação "Direita"
+                    var_acao_dir = self.get_var(f"{t}_A_D")
+                    if j == 2:
+                        self.clausulas.append([-var_acao_dir, -var_zero])
                     # Cima
                     if i > 0:
                         var_acao = self.get_var(f"{t}_A_C")
@@ -170,6 +188,5 @@ class SATEncoder:
                         if var_estado in modelo_set:
                             estado[i][j] = k
             print("Estado após passo", t)
-            for linha in estado:
-                print(' '.join(str(x) for x in linha))
-            print()
+            from puzzle_utils import print_estado
+            print_estado(estado)

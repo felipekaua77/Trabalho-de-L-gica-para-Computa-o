@@ -15,7 +15,7 @@ print("Estado inicial:")
 print_estado(estado_inicial)
 
 # Tente encontrar solução com N passos
-max_passos = 20
+max_passos = 10000
 for N in range(1, max_passos + 1):
     print(f"Tentando resolver com {N} passos...")
 

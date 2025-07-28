@@ -80,6 +80,7 @@ class SATEncoder:
                     va_d = self.var(f"{t}_A_D")
                     if j == 2:
                         self.claus.append([-va_d, -vz])
+
                     # Cima
                     if i > 0:
                         va = self.var(f"{t}_A_C")
@@ -96,6 +97,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
+
                     # Baixo
                     if i < 2:
                         va = self.var(f"{t}_A_B")
@@ -112,6 +114,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
+
                     # Esquerda
                     if j > 0:
                         va = self.var(f"{t}_A_E")
@@ -128,6 +131,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
+
                     # Direita
                     if j < 2:
                         va = self.var(f"{t}_A_D")
@@ -144,6 +148,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
+                                        
         # Estado se repete se nenhuma ação possível
         for i in range(3):
             for j in range(3):

@@ -9,7 +9,7 @@ final = [
 ]
 
 try:
-    ini = embaralhar(final, passos=30)
+    ini = embaralhar(final, passos=30) # Embaralha o estado final para criar um estado inicial
 except Exception as e:
     print("Erro ao gerar estado inicial:", e)
     exit(1)
@@ -17,24 +17,24 @@ except Exception as e:
 print("Estado inicial:")
 mostrar(ini)
 
-max_n = 100
+max_n = 100 
 for n in range(1, max_n + 1):
     print(f"Tentando resolver com {n} passos...")
 
-    enc = SATEncoder(n)
-    enc.add_ini(ini)
-    enc.add_pos()
-    enc.add_exc()
-    enc.add_acs()
-    enc.add_trans()
-    enc.add_obj(final)
+    encoder = SATEncoder(n) 
+    encoder.add_ini(ini)
+    encoder.add_pos()
+    encoder.add_exc()
+    encoder.add_acs()
+    encoder.add_trans()
+    encoder.add_obj(final)
 
-    solv = Glucose3()
-    solv.append_formula(enc.claus)
+    solver = Glucose3()
+    solver.append_formula(encoder.claus)
 
-    if solv.solve():
-        modelo = solv.get_model()
-        enc.mostrar_sol(modelo)
+    if solver.solve():
+        modelo = solver.get_model()
+        encoder.mostrar_sol(modelo)
         print(f"Solução encontrada com {n} passos.")
         break
 else:

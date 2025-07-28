@@ -2,18 +2,21 @@ from puzzleUtilitario import mostrar
 
 class SATEncoder:
     def __init__(self, max_p):
+        # inicializa o codificador, guarda o maximo de passos, as clausulas, o mapa de variaveis e um contador
         self.max_p = max_p
         self.claus = []
         self.vmap = {}
         self.count = 1
 
     def var(self, simb):
+        # pega o numero da variavel, se nao tem ainda, cria uma nova
         if simb not in self.vmap:
             self.vmap[simb] = self.count
             self.count += 1
         return self.vmap[simb]
 
     def add_ini(self, est):
+        # adiciona as clausulas do estado inicial, cada posicao do tabuleiro
         for i in range(3):
             for j in range(3):
                 k = est[i][j]
@@ -22,6 +25,7 @@ class SATEncoder:
                 self.claus.append([v])
 
     def add_obj(self, est):
+        # adiciona as clausulas do objetivo, cada posicao do tabuleiro no ultimo passo
         t = self.max_p
         for i in range(3):
             for j in range(3):
@@ -31,6 +35,7 @@ class SATEncoder:
                 self.claus.append([v])
 
     def add_pos(self):
+        # garante que cada posicao do tabuleiro tem alguma celula em cada passo
         for t in range(self.max_p + 1):
             for i in range(3):
                 for j in range(3):
@@ -41,6 +46,7 @@ class SATEncoder:
                     self.claus.append(clause)
 
     def add_exc(self):
+        # garante que cada posicao tem so uma celula, exclusividade
         for t in range(self.max_p + 1):
             for i in range(3):
                 for j in range(3):
@@ -51,6 +57,7 @@ class SATEncoder:
                             self.claus.append([-self.var(simb1), -self.var(simb2)])
 
     def add_acs(self):
+        # adiciona as clausulas das acoes, so pode fazer uma por vez
         for t in range(1, self.max_p + 1):
             acs = []
             for acao in ['C', 'B', 'E', 'D']:
@@ -62,12 +69,13 @@ class SATEncoder:
                     self.claus.append([-acs[i], -acs[j]])
 
     def add_trans(self):
+        # adiciona as clausulas de transicao, como o tabuleiro muda com cada acao
         for t in range(1, self.max_p + 1):
             for i in range(3):
                 for j in range(3):
                     simb_z = f"{t-1}_P_{i}_{j}_0"
                     vz = self.var(simb_z)
-                    # Pré-condições
+                    # pre-condicoes pra cada acao
                     va_c = self.var(f"{t}_A_C")
                     if i == 0:
                         self.claus.append([-va_c, -vz])
@@ -80,8 +88,7 @@ class SATEncoder:
                     va_d = self.var(f"{t}_A_D")
                     if j == 2:
                         self.claus.append([-va_d, -vz])
-
-                    # Cima
+                    # cima
                     if i > 0:
                         va = self.var(f"{t}_A_C")
                         vz_n = self.var(f"{t}_P_{i-1}_{j}_0")
@@ -97,8 +104,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
-
-                    # Baixo
+                    # baixo
                     if i < 2:
                         va = self.var(f"{t}_A_B")
                         vz_n = self.var(f"{t}_P_{i+1}_{j}_0")
@@ -114,8 +120,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
-
-                    # Esquerda
+                    # esquerda
                     if j > 0:
                         va = self.var(f"{t}_A_E")
                         vz_n = self.var(f"{t}_P_{i}_{j-1}_0")
@@ -131,8 +136,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
-
-                    # Direita
+                    # direita
                     if j < 2:
                         va = self.var(f"{t}_A_D")
                         vz_n = self.var(f"{t}_P_{i}_{j+1}_0")
@@ -148,8 +152,7 @@ class SATEncoder:
                                         va_ant = self.var(f"{t-1}_P_{x}_{y}_{k}")
                                         va_novo = self.var(f"{t}_P_{x}_{y}_{k}")
                                         self.claus.append([-vz, -va, -va_ant, va_novo])
-                                        
-        # Estado se repete se nenhuma ação possível
+        # se nao tem acao, o estado repete igual, muda nada
         for i in range(3):
             for j in range(3):
                 simb_z = f"{t-1}_P_{i}_{j}_0"
@@ -169,14 +172,15 @@ class SATEncoder:
                                 self.claus.append(claus_acs_neg + [-va_ant, va_novo])
 
     def mostrar_sol(self, modelo):
+        # mostra a solucao, cada passo e estado do tabuleiro
         modelo_set = set(v for v in modelo if v > 0)
-        acao_map = { 'C': 'Cima', 'B': 'Baixo', 'E': 'Esquerda', 'D': 'Direita' }
+        acao_map = { 'C': 'cima', 'B': 'baixo', 'E': 'esquerda', 'D': 'direita' }
         for t in range(1, self.max_p + 1):
             for acao in ['C', 'B', 'E', 'D']:
                 simb = f"{t}_A_{acao}"
                 v = self.var(simb)
                 if v in modelo_set:
-                    print(f"Passo {t}: {acao_map[acao]}")
+                    print(f"passo {t}: {acao_map[acao]}")
             est = [[-1 for _ in range(3)] for _ in range(3)]
             for i in range(3):
                 for j in range(3):
@@ -185,5 +189,5 @@ class SATEncoder:
                         v_est = self.var(simb_est)
                         if v_est in modelo_set:
                             est[i][j] = k
-            print("Estado após passo", t)
+            print("estado apos passo", t)
             mostrar(est)

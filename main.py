@@ -9,7 +9,7 @@ final = [                                               # define o estado final 
 ]
 
 try:
-    ini = embaralhar(final, passos=30)                  # gera estado inicial aplicando 30 movimentos validos
+    ini = embaralhar(final, passos=30)                  # gera estado inicial com 30 movimentos validos
 except Exception as e:
     print("Erro ao gerar estado inicial:", e)           # se der erro na geracao, mostra e sai
     exit(1)
@@ -17,8 +17,8 @@ except Exception as e:
 print("Estado inicial:")
 mostrar(ini)                                            # mostra o estado inicial no terminal
 
-max_n = 100                                             # define o maximo de passos para tentar resolver
-for n in range(1, max_n + 1):                           # tenta encontrar solucao com 1 ate 100 passos
+max_n = 100                                             # maximo de passos
+for n in range(1, max_n + 1):                           # tenta encontrar solucao de 1 ate 100 passos
     print(f"Tentando resolver com {n} passos...")
 
     enc = SATEncoder(n)                                 # cria o codificador sat para n passos
@@ -33,7 +33,7 @@ for n in range(1, max_n + 1):                           # tenta encontrar soluca
     solv.append_formula(enc.claus)                      # carrega as clausulas no solver
 
     if solv.solve():                                    # se encontrar solucao satisfazendo as clausulas
-        modelo = solv.get_model()                       # extrai o modelo (solucao encontrada)
+        modelo = solv.get_model()                       # extrai o modelo
         enc.mostrar_sol(modelo)                         # mostra a sequencia de acoes e estados
         print(f"Solução encontrada com {n} passos.")    # mostra quantos passos foram usados
         break

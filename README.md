@@ -1,8 +1,8 @@
 Trabalho de Lógica para Computação
 Integrantes:
-- Felipe Kauã Silva do Nascimento 
-- Francisco Caique Xavier Sousa
-- Ian Lucas Moreira Medeiros
+- Felipe Kauã Silva do Nascimento-565631
+- Francisco Caique Xavier Sousa-567442
+- Ian Lucas Moreira Medeiros-565911
 
 Descrição:
 Este programa implementa a resolução do 8-puzzle usando lógica proposicional

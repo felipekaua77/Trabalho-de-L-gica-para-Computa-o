@@ -1,4 +1,4 @@
-from puzzle_utils import mostrar
+from puzzleUtilitario import mostrar
 
 class SATEncoder:
     def __init__(self, max_p):
